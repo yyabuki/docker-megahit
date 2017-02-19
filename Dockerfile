@@ -1,5 +1,6 @@
 FROM debian:wheezy
-MAINTAINER Michael Barton, mail@michaelbarton.me.uk
+MAINTAINER Yukimitsu Yabuki, yukimitsu.yabuki@gmail.com
+# Modified an attached file (run) created by Michael Barton.
 
 ENV PACKAGES wget make python g++ zlib1g-dev bc
 ENV MEGAHIT_DIR /tmp/megahit
