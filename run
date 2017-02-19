@@ -1,0 +1,43 @@
+#!/bin/bash
+
+set -o errexit
+set -o xtrace
+set -o nounset
+
+# The first argument is the location of the reads in the container filesystem.
+# The will be present in a read-only directory
+READS=$2
+
+# The second argument is a directory with write-access where the final
+# assembly should be written to.
+DIR=$3
+
+# The assembly should be written to the file "contigs.fa" in the output directory
+ASSEMBLY=$DIR/contigs.fa
+
+# Setup logging
+LOG=$DIR/log.txt
+exec > >(tee ${LOG})
+exec 2>&1
+
+#TMP_DIR=`mktemp -d`
+#cd ${TMP_DIR}
+cd ${DIR}
+
+MEM=$(echo "900 * $(grep MemTotal /proc/meminfo | awk '{print $2}')" | bc)
+#MAX_READ_LENGTH=150
+MAX_READ_LENGTH=251
+
+# Determine which process to run
+PROC=$1
+CMD=$(egrep ^${PROC}: /Procfile | cut -f 2 -d ':')
+if [[ -z ${CMD} ]]; then
+  echo "Abort, no proc found for '${PROC}'."
+  exit 1
+fi
+eval ${CMD}
+
+python ${MEGAHIT_DIR}/megahit ${FLAGS} --cpu-only -r ${READS} -m ${MEM} -l ${MAX_READ_LENGTH}
+
+#cp ${TMP_DIR}/megahit_out/final.contigs.fa ${ASSEMBLY}
+cp ${DIR}/megahit_out/final.contigs.fa ${ASSEMBLY}
