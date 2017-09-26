@@ -4,6 +4,21 @@ set -o errexit
 set -o xtrace
 set -o nounset
 
+# get a version and exit.
+if [ $1 = 'version' ]; then
+  VERDIR=$2
+  CMD=`egrep ^version: /Procfile | cut -f 2 -d ':'`
+  trap `python ${MEGAHIT_DIR}/megahit ${CMD} 1> /dev/null 2> ${VERDIR}/version ; echo $?`
+  IFS=$'\n'
+  RES=`cat ${VERDIR}/version`
+  for line in ${RES}; do
+    if [[ ${line} =~ ^(megahit version) ]]; then
+        `echo ${line} > $2/version`
+    fi
+  done
+  exit 0
+fi
+
 # The first argument is the location of the reads in the container filesystem.
 # The will be present in a read-only directory
 READS=$2
