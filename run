@@ -54,5 +54,5 @@ eval ${CMD}
 
 python ${MEGAHIT_DIR}/megahit ${FLAGS} --cpu-only -r ${READS} -m ${MEM} -l ${MAX_READ_LENGTH}
 
-#cp ${TMP_DIR}/megahit_out/final.contigs.fa ${ASSEMBLY}
 cp ${DIR}/megahit_out/final.contigs.fa ${ASSEMBLY}
+chmod -R 777 ${DIR}/megahit_out
